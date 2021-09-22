@@ -10,7 +10,7 @@ const authorize = async (req, res, next) => {
     }
     const token = authHeaders.split(' ')[1];
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-    // attach the user to the job routes
+
     req.user = { id: decoded.user.id, username: decoded.user.username };
     next();
   } catch (error) {

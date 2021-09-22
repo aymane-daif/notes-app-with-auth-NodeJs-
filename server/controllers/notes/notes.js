@@ -25,7 +25,6 @@ const getNote = async (req, res, next) => {
   try {
     const { id } = req.params;
     const note = await Note.findOne({ _id: id, user: req.user.id });
-
     if (!note) {
       // if id doesn't exist
       return next(new CustomError('Resource not found', 400));
