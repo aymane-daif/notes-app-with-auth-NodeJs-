@@ -1,11 +1,11 @@
 const Note = require('../../models/Note');
+const CustomError = require('../../errors/CustomError');
 
 const getAllNotes = async (req, res, next) => {
   try {
     const notes = await Note.find({});
-    res.json(notes);
+    res.status(200).json(notes);
   } catch (err) {
-    console.log(err.message);
     next(err);
   }
 };
@@ -13,23 +13,26 @@ const getAllNotes = async (req, res, next) => {
 const createNote = async (req, res, next) => {
   try {
     const createdNote = await Note.create(req.body);
-    res.json(createdNote);
+    res.status(201).json(createdNote);
   } catch (err) {
-    console.log(err.message);
     next(err);
   }
 };
 
 const getNote = async (req, res, next) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const note = await Note.findById(id);
-    if (!note) throw Error('No note found with id ' + id);
-    res.json(note);
+    if (!note) {
+      // if id doesn't exist
+      return next(new CustomError('Resource not found', 400));
+    }
+    res.status(200).json(note);
   } catch (err) {
     next(err);
   }
 };
+
 const updateNote = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -37,17 +40,20 @@ const updateNote = async (req, res, next) => {
       runValidators: true,
       new: true,
     });
-    if (!updatedNote) throw Error('No note found with id ' + id);
+    if (!updatedNote) {
+      return next(new CustomError('Resource not found', 400));
+    }
     res.json(updatedNote);
   } catch (err) {
     next(err);
   }
 };
+
 const deleteNote = async (req, res, next) => {
   try {
     const { id } = req.params;
     const deletedNote = await Note.findByIdAndDelete(id);
-    if (!deletedNote) throw Error('No note found with id ' + id);
+    if (!deletedNote) return next(new CustomError('Resource not found', 400));
     res.json(deletedNote);
   } catch (err) {
     next(err);
