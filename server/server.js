@@ -1,7 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const notes = require('./routes/notes/notes');
-const { notFound, errorHandler } = require('./middlewares/middlewares');
+const authenticate = require('./routes/auth/auth');
+const { notFound, errorHandler } = require('./middlewares/errors');
+const authorize = require('./middlewares/auth');
 require('dotenv').config();
 const app = express();
 
@@ -11,7 +13,8 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to our notes api 🤘' });
 });
 
-app.use('/api/', notes);
+app.use('/api/notes', authorize, notes);
+app.use('/api/auth', authenticate);
 app.use(notFound);
 app.use(errorHandler);
 

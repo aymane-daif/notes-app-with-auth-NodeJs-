@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const NoteSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     title: {
       type: String,
       maxlength: [60, 'Your title length must be between 1 and 60 characters'],
